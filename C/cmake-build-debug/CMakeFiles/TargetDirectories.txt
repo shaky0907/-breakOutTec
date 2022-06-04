@@ -1,0 +1,3 @@
+/home/david/Documents/GitHub/-breakOutTec/C/cmake-build-debug/CMakeFiles/C.dir
+/home/david/Documents/GitHub/-breakOutTec/C/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/david/Documents/GitHub/-breakOutTec/C/cmake-build-debug/CMakeFiles/rebuild_cache.dir
