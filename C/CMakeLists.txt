@@ -3,4 +3,7 @@ project(C C)
 
 set(CMAKE_C_STANDARD 99)
 
-add_executable(C main.c)
+
+
+add_executable(C Server.c Server.h JsonHandle.h Constantes.h )
+target_link_libraries(C json-c)
