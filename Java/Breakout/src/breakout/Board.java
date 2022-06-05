@@ -15,8 +15,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
-public class Board extends JPanel {
+public class Board<T> extends JPanel {
 
     private Timer timer;
     private String message = "GAME OVER";
@@ -51,12 +55,13 @@ public class Board extends JPanel {
         setFocusable(true);
         setPreferredSize(new Dimension(Commons.WIDTH, Commons.HEIGHT));
 
-        gameInit(0, 3 ,1, 2);
+        gameInit(0, 3 ,1, 1);
     }
 
     private void gameInit(Integer scr, Integer lvs, Integer lvl, Integer balls) {
 
         numBalls = balls;
+        //System.out.println(numBalls);
         bricks = new Brick[Commons.N_OF_BRICKS];
         ball = new Ball[numBalls];
 
@@ -71,10 +76,10 @@ public class Board extends JPanel {
 
         Integer k = 0;
 
-        bricks[0] = new Brick(11 * 42 + 7, 1 * 7 + 50, "red");
-        bricks[1] = new Brick(13 * 42 + 7, 1 * 7 + 50, "red");
-        for (Integer i = 0; i < 1; i++) {
-            for (Integer j = 12; j < 14; j++) {
+        //bricks[0] = new Brick(11 * 42 + 7, 1 * 7 + 50, "red");
+        //bricks[1] = new Brick(13 * 42 + 7, 1 * 7 + 50, "red");
+        for (Integer i = 0; i < 8; i++) {
+            for (Integer j = 0; j < 14; j++) {
                 if (i < 2) {
                     bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "red");
                     k++;
@@ -123,6 +128,9 @@ public class Board extends JPanel {
 
     private void drawObjects(Graphics2D g2d) {
         for (Ball value : ball) {
+            if (value == null) {
+                continue;
+            }
             g2d.drawImage(value.getImage(), value.getX(), value.getY(),
                     value.getImageWidth(), value.getImageHeight(), this);
         }
@@ -195,6 +203,9 @@ public class Board extends JPanel {
 
     private void doGameCycle() {
         for (Ball value : ball) {
+            if (value == null) {
+                continue;
+            }
             value.move();
         }
         paddle.move();
@@ -211,13 +222,19 @@ public class Board extends JPanel {
     private void checkCollision() {
 
         for (Ball value : ball) {
+            if (value == null) {
+                continue;
+            }
             if (value.getRect().getMaxY() > Commons.BOTTOM_EDGE) {
-                if (ballsLeft > 0 && ball.length == 1) {
+                if (ballsLeft > 0 && numBalls == 1) {
                     timer.stop();
                     ballsLeft--;
                     gameInit(score, ballsLeft, level, numBalls);
                 }
-                else if (ballsLeft > 0 && ball.length > 1) {
+                else if (ballsLeft > 0 && numBalls > 1) {
+                    List<Ball> list = new ArrayList<Ball>((Collection<? extends Ball>) Arrays.asList(ball));
+                    list.remove(value);
+                    ball = list.toArray(ball);
                     numBalls--;
                 }
                 else {
@@ -240,16 +257,26 @@ public class Board extends JPanel {
             }
         }
         for (Ball value : ball) {
+            if (value == null) {
+                continue;
+            }
             if ((value.getRect()).intersects(paddle.getRect())) {
                 Double paddleLPosAux = paddle.getRect().getMinX();
                 Integer paddleLPos = paddleLPosAux.intValue();
                 Double ballLPosAux = value.getRect().getMinX();
                 Integer ballLPos = ballLPosAux.intValue();
 
-                Integer second = paddleLPos + 16;
-                Integer third = paddleLPos + 24;
+                Double first = paddleLPos + paddle.getRect().getWidth()/5;
+                Double second = paddleLPos + (paddle.getRect().getWidth()/5)*2;
+                Double third = paddleLPos + (paddle.getRect().getWidth()/5)*3;
+                Double fourth = paddleLPos + (paddle.getRect().getWidth()/5)*4;
 
-                if (ballLPos < second) {
+                if (ballLPos < first) {
+
+                    value.setXDir((value.getInitialXDir() * -1) - 1);
+                    value.setYDir(value.getInitialYDir());
+                }
+                if (ballLPos >= first && ballLPos < second) {
 
                     value.setXDir(value.getInitialXDir() * -1);
                     value.setYDir(value.getInitialYDir());
@@ -259,15 +286,23 @@ public class Board extends JPanel {
                     value.setXDir(0);
                     value.setYDir(value.getInitialYDir());
                 }
-                if (ballLPos >= third) {
+                if (ballLPos >= third && ballLPos < fourth) {
 
                     value.setXDir(value.getInitialXDir());
+                    value.setYDir(value.getInitialYDir());
+                }
+                if (ballLPos >= fourth) {
+
+                    value.setXDir(value.getInitialXDir() + 1);
                     value.setYDir(value.getInitialYDir());
                 }
             }
         }
 
         for (Ball value : ball) {
+            if (value == null) {
+                continue;
+            }
             for (Integer i = 0; i < Commons.N_OF_BRICKS; i++) {
 
                 if ((value.getRect()).intersects(bricks[i].getRect())) {
