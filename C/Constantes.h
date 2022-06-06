@@ -6,6 +6,8 @@
 #define C_CONSTANTES_H
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 
 #define PORT 3550

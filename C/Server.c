@@ -24,6 +24,7 @@
 int main(){
 
 
+
     int* poderes;
     poderes = createpower_array();
 
@@ -43,6 +44,7 @@ int main(){
     jsonParserCliente(json);
 
     return 0;
+
 };
 
 /*
@@ -158,8 +160,8 @@ int main() {
 
     return 0;
 }
-*/
 
+*/
 /**
  * Crea un nuevo socket cliente.
  * Se le pasa el socket servidor y el arreglo de clientes, con el numero de clientes

@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "C::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-C-Debug-7026d4d96662f1e84e56.json",
+					"jsonFile" : "target-C-Debug-043b47e259acb2d373af.json",
 					"name" : "C",
 					"projectIndex" : 0
 				}
@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/david/Documents/GitHub/-breakOutTec/C/cmake-build-debug",
-		"source" : "/home/david/Documents/GitHub/-breakOutTec/C"
+		"build" : "/home/kash/Documents/GitHub/-breakOutTec/C/cmake-build-debug",
+		"source" : "/home/kash/Documents/GitHub/-breakOutTec/C"
 	},
 	"version" : 
 	{

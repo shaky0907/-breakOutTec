@@ -76,4 +76,13 @@ public class Paddle extends Sprite  {
         x = Commons.INIT_PADDLE_X;
         y = Commons.INIT_PADDLE_Y;
     }
+
+    Integer getX(){
+
+        return x;
+    }
+
+    Integer getY(){
+        return y;
+    }
 }
