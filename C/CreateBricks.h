@@ -11,29 +11,27 @@
 #include <time.h>
 #include "Constantes.h"
 
-char * createpower_array(){
+int * createpower_array(){
 
-    char* test;
-    test = malloc(sizeof (char) * 112);
+    int* test;
+    test = malloc(sizeof (int) * 112);
     srand(time(NULL));
     for(int i = 0; i < 112; i++){
-        printf(" brick: %d\n",i);
-        int r = rand() % 10;
+
+        int r = rand() % 7;
         if(r == 0) {
             int r_new = rand() % 6 + 1;
 
-            int length = snprintf(NULL, 0, "%d", r_new);
-            char *str = malloc(length + 1);
-            snprintf(str, length + 1, "%d", r_new);
+            test[i] = r_new;
 
-            strcat(test,str);
-            printf("Poder: %c\n",test[i]);
         }
         else{
-            strcat(test,"0");
+            test[i] = 0;
         }
 
     }
+
+
     return test;
 };
 

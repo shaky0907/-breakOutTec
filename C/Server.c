@@ -21,20 +21,30 @@
 
 
 
-
-
 int main(){
-    
-    char* final;
-    printf("Hola\n");
-    final = createpower_array();
-    printf("Final: %s\n",final);
-    for(int j = 0; j< 112; j++){
-        printf("Poder del brick %d es %c\n",j ,final[j]);
+
+
+    int* poderes;
+    poderes = createpower_array();
+
+    for(int j = 0; j< 112; j++) {
+        printf("Poder del brick %d es %d\n", j, poderes[j]);
     }
+
+
+
+
+    char* json;
+    int score[] = {100,200,300,500};
+
+
+    json = generateJSONINIT(score,poderes);
+
+    jsonParserCliente(json);
 
     return 0;
 };
+
 /*
 int main() {
 
@@ -150,7 +160,6 @@ int main() {
 }
 */
 
-
 /**
  * Crea un nuevo socket cliente.
  * Se le pasa el socket servidor y el arreglo de clientes, con el numero de clientes
@@ -220,4 +229,4 @@ void compactaClaves(int *tabla, int *n)
         }
     }
     *n = j;
-}
+};

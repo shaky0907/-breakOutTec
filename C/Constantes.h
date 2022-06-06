@@ -4,6 +4,7 @@
 
 #ifndef C_CONSTANTES_H
 #define C_CONSTANTES_H
+#include <stdio.h>
 #include <string.h>
 
 
