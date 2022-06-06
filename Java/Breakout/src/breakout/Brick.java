@@ -7,16 +7,17 @@ public class Brick extends Sprite {
 
     private Boolean destroyed;
 
-    public Brick(Integer x, Integer y, String color) {
+    public Brick(Integer x, Integer y, String color, Integer value) {
         
-        initBrick(x, y, color);
+        initBrick(x, y, color, value);
     }
     
-    private void initBrick(Integer x, Integer y, String color) {
+    private void initBrick(Integer x, Integer y, String color, Integer value) {
         
         this.x = x;
         this.y = y;
         this.color = color;
+        this.value = value;
         
         destroyed = false;
 

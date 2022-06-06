@@ -8,10 +8,10 @@ public class Sprite {
     Integer x;
     Integer y;
     String color;
+    Integer value;
     Integer imageWidth;
     Integer imageHeight;
     Image image;
-    
     protected void setX(Integer x) {
 
         this.x = x;
@@ -57,5 +57,9 @@ public class Sprite {
 
         imageWidth = image.getWidth(null);
         imageHeight = image.getHeight(null);
+    }
+
+    Integer getValue(){
+        return value;
     }
 }

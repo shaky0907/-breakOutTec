@@ -21,28 +21,20 @@ import java.util.Collection;
 import java.util.List;
 
 public class Board<T> extends JPanel {
-
     private Timer timer;
     private String message = "GAME OVER";
-
     private String score_msg = "SCORE";
-
     private Integer score;
-
     private String ballsLeft_msg = "LIVES";
-
     private Integer ballsLeft;
-
     private String level_msg = "LEVEL";
-
     private Integer level;
     private Ball[] ball;
     private Paddle paddle;
     private Brick[] bricks;
     private Boolean inGame = true;
-
     private Integer numBalls;
-
+    private static SocketClient socket;
     public Board() {
 
         initBoard();
@@ -51,6 +43,7 @@ public class Board<T> extends JPanel {
     private void initBoard() {
 
         setBackground(Color.DARK_GRAY);
+        socket = new SocketClient("0.0.0.0", 3550);
         addKeyListener(new TAdapter());
         setFocusable(true);
         setPreferredSize(new Dimension(Commons.WIDTH, Commons.HEIGHT));
@@ -81,19 +74,19 @@ public class Board<T> extends JPanel {
         for (Integer i = 0; i < 8; i++) {
             for (Integer j = 0; j < 14; j++) {
                 if (i < 2) {
-                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "red");
+                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "red", 400);
                     k++;
                 }
                 else if (i < 4) {
-                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "orange");
+                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "orange", 300);
                     k++;
                 }
                 else if (i < 6) {
-                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "yellow");
+                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "yellow",200);
                     k++;
                 }
                 else {
-                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "green");
+                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "green",100);
                     k++;
                 }
             }
@@ -211,6 +204,8 @@ public class Board<T> extends JPanel {
         paddle.move();
         checkCollision();
         repaint();
+        socket.sentString(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks));
+        //System.out.println(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks));
     }
 
     private void stopGame() {
@@ -339,10 +334,57 @@ public class Board<T> extends JPanel {
                             value.setYDir(value.getInitialYDir());
                         }
 
+                        score += bricks[i].getValue();
                         bricks[i].setDestroyed(true);
                     }
                 }
             }
         }
+    }
+    String parseJson(Integer lives, Integer score, Integer numBalls, Integer level, Paddle paddle, Ball[] ball, Brick[] bricks){
+        String paddlePos = "[";
+        StringBuilder ballsPos = new StringBuilder("[");
+        StringBuilder bricksLeft = new StringBuilder("[");
+        String json = "";
+
+        System.out.println(json);
+
+        paddlePos += paddle.getX().toString() + "," + paddle.getY().toString() + "]";
+
+        for (Integer i = 0;  i < numBalls; i++){
+            if (ball[i] != null) {
+                if (i == numBalls - 1) {
+                    ballsPos.append(i.toString()).append(",").append(ball[i].getX().toString()).append(",").append(ball[i].getY().toString());
+                } else {
+                    ballsPos.append(i.toString()).append(",").append(ball[i].getX().toString()).append(",").append(ball[i].getY().toString()).append(",");
+                }
+            }
+        }
+        ballsPos.append("]");
+
+
+        for (Integer i = 0; i < 112; i++){
+            if(!bricks[i].isDestroyed()) {
+                //System.out.println(i.toString() + "\",\"" + bricks[i].getX().toString()+ "\",\"" + bricks[i].getY().toString() + "\",\"");
+                if (i == 111) {
+                    bricksLeft.append(i.toString()).append(",").append(bricks[i].getX().toString()).append(",").append(bricks[i].getY().toString());
+                } else {
+                    bricksLeft.append(i.toString()).append(",").append(bricks[i].getX().toString()).append(",").append(bricks[i].getY().toString()).append(",");
+                }
+            }
+        }
+        bricksLeft.append("]");
+
+        json =
+                "{ \"lives\": " + lives.toString() +
+                        ", \"score\": " + score.toString() +
+                        ", \"level\": " + level.toString() +
+                        ", \"numBalls\": " + numBalls.toString() +
+                        ", \"paddlePos\": " + paddlePos +
+                        ", \"ballsPos\": " + ballsPos +
+                        ", \"bricksLeft\": " + bricksLeft +
+                        " }";
+
+        return json;
     }
 }

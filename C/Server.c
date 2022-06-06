@@ -23,7 +23,7 @@
 
 
 
-int main(){
+/*int main(){
     
     char* final;
     printf("Hola\n");
@@ -34,8 +34,8 @@ int main(){
     }
 
     return 0;
-};
-/*
+};*/
+
 int main() {
 
 
@@ -148,7 +148,7 @@ int main() {
 
     return 0;
 }
-*/
+
 
 
 /**
