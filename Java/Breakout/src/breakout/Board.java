@@ -34,6 +34,7 @@ public class Board extends JPanel {
     private Brick[] bricks;
     private Boolean inGame = true;
     private Integer numBalls;
+    private Integer flag;
     private static SocketClient socket;
     public Board() {
 
@@ -47,18 +48,19 @@ public class Board extends JPanel {
         addKeyListener(new TAdapter());
         setFocusable(true);
         setPreferredSize(new Dimension(Commons.WIDTH, Commons.HEIGHT));
+        flag = 0;
+        this.bricks = new Brick[Commons.N_OF_BRICKS];
 
-        gameInit(0, 3 ,1, 1);
+        gameInit(0, 3 ,1, 1, bricks);
     }
 
-    private void gameInit(Integer scr, Integer lvs, Integer lvl, Integer balls) {
+    private void gameInit(Integer scr, Integer lvs, Integer lvl, Integer balls, Brick[] bricks1) {
 
         numBalls = balls;
         //System.out.println(numBalls);
-        bricks = new Brick[Commons.N_OF_BRICKS];
         ball = new Ball[numBalls];
 
-        for (Integer i = 0; i < ball.length; i++){
+        for (Integer i = 0; i < ball.length; i++) {
 
             ball[i] = new Ball(lvl, lvl * -1);
         }
@@ -71,25 +73,27 @@ public class Board extends JPanel {
 
         //bricks[0] = new Brick(11 * 42 + 7, 1 * 7 + 50, "red");
         //bricks[1] = new Brick(13 * 42 + 7, 1 * 7 + 50, "red");
-        for (Integer i = 0; i < 8; i++) {
-            for (Integer j = 0; j < 14; j++) {
-                if (i < 2) {
-                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "red", 400);
-                    k++;
-                }
-                else if (i < 4) {
-                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "orange", 300);
-                    k++;
-                }
-                else if (i < 6) {
-                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "yellow",200);
-                    k++;
-                }
-                else {
-                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "green",100);
-                    k++;
+        if (flag == 0){
+            for (Integer i = 0; i < 8; i++) {
+                for (Integer j = 0; j < 14; j++) {
+                    if (i < 2) {
+                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "red", 400);
+                        k++;
+                    } else if (i < 4) {
+                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "orange", 300);
+                        k++;
+                    } else if (i < 6) {
+                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "yellow", 200);
+                        k++;
+                    } else {
+                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "green", 100);
+                        k++;
+                    }
                 }
             }
+        }
+        else {
+            bricks = bricks1;
         }
 
         timer = new Timer(Commons.PERIOD, new GameCycle());
@@ -204,8 +208,9 @@ public class Board extends JPanel {
         paddle.move();
         checkCollision();
         repaint();
-        //socket.sentString(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks));
-        //System.out.println(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks));
+        socket.sentString(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks));
+        //String received = socket.receiveString();
+        //System.out.println(received);
     }
 
     private void stopGame() {
@@ -224,7 +229,8 @@ public class Board extends JPanel {
                 if (ballsLeft > 0 && numBalls == 1) {
                     timer.stop();
                     ballsLeft--;
-                    gameInit(score, ballsLeft, level, numBalls);
+                    flag++;
+                    gameInit(score, ballsLeft, level, numBalls, bricks);
                 }
                 else if (ballsLeft > 0 && numBalls > 1) {
                     List<Ball> list = new ArrayList<Ball>((Collection<? extends Ball>) Arrays.asList(ball));
@@ -248,7 +254,9 @@ public class Board extends JPanel {
 
                 timer.stop();
                 level++;
-                gameInit(score, ballsLeft ,level, numBalls);
+                flag = 0;
+                gameInit(score, ballsLeft ,level, numBalls, bricks);
+                socket.sentString("{ \"Type\":1 }");
             }
         }
         for (Ball value : ball) {
