@@ -20,34 +20,33 @@
 
 
 
-
-int main(){
+/**
+ * Crea un json con los puntajes de los ladrillos de cada nivel y el poder de cada uno
+ *@return char* json
+char* initbricks(){
 
 
 
     int* poderes;
     poderes = createpower_array();
-
+    /*
     for(int j = 0; j< 112; j++) {
         printf("Poder del brick %d es %d\n", j, poderes[j]);
-    }
-
-
+    }*/
 
 
     char* json;
-    int score[] = {100,200,300,500};
-
+    int score[] = {BRICK_GREENP, BRICK_YELLOWP, BRICK_ORANGEP, BRICK_REDP};
 
     json = generateJSONINIT(score,poderes);
 
     jsonParserCliente(json);
 
-    return 0;
+    return json;
 
 };
 
-/*
+
 int main() {
 
 
@@ -161,7 +160,7 @@ int main() {
     return 0;
 }
 
-*/
+
 /**
  * Crea un nuevo socket cliente.
  * Se le pasa el socket servidor y el arreglo de clientes, con el numero de clientes

@@ -11,7 +11,11 @@
 #include <json-c/json.h>
 
 
-
+/**
+ * transforma un int en string
+ * @param int num
+ * @return char* str
+ */
 char* int_to_str(int num){
 
     int length = snprintf(NULL, 0, "%d", num);
@@ -19,18 +23,23 @@ char* int_to_str(int num){
     snprintf(str, length + 1, "%d", num);
     return str;
 };
+
+/**
+ * revisa mensajes de json del cliente
+ * @param char msg[]
+ */
 void jsonParserCliente(char msg[]){
 
-
+    ///structs para extraer la info
     struct json_object *parsed_json;
     struct json_object *score;
     struct json_object *lives;
     struct json_object *lvl;
 
-
     size_t n_friends;
     size_t i;
 
+    ///Extraer objetos del json
     parsed_json = json_tokener_parse(msg);
     json_object_object_get_ex(parsed_json,"scores",&score);
     json_object_object_get_ex(parsed_json,"power",&lvl);
@@ -38,6 +47,15 @@ void jsonParserCliente(char msg[]){
     printf("Scores: %s\n", json_object_get_string(score));
     printf("powers: %s\n", json_object_get_string(lvl));
 };
+
+
+
+/**
+ * genera el json
+ * @param score
+ * @param power
+ * @return
+ */
 char* generateJSONINIT(int score[],int power[]){
 
 

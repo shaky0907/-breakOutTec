@@ -13,6 +13,11 @@
 #define PORT 3550
 #define MAX_CLIENTES 10
 
+#define BRICK_GREENP 100
+#define BRICK_YELLOWP 200
+#define BRICK_ORANGEP 300
+#define BRICK_REDP 500
+
 
 
 

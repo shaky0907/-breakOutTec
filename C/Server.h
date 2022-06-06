@@ -6,6 +6,8 @@
 #define C_SERVER_H
 
 
+char* initbricks();
+
 void nuevoCliente(int servidor, int *clientes, int *nClientes);
 
 int obtenerMaximo(int *tabla, int n);
