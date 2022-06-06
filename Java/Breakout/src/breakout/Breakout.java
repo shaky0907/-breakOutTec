@@ -5,13 +5,11 @@ import java.awt.*;
 import java.lang.*;
 
 public class Breakout extends JFrame {
-
     public Breakout() {
-        
         initUI();
     }
-    
-    private void initUI() {
+
+    public void initUI() {
 
         add(new Board());
         setTitle("Breakout");
@@ -19,14 +17,5 @@ public class Breakout extends JFrame {
         setLocationRelativeTo(null);
         setResizable(false);
         pack();
-    }
-
-    public static void main(String[] args) {
-        
-        EventQueue.invokeLater(() -> {
-
-            var game = new Breakout();
-            game.setVisible(true);
-        });
     }
 }

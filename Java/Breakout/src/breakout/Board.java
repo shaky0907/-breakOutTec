@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class Board<T> extends JPanel {
+public class Board extends JPanel {
     private Timer timer;
     private String message = "GAME OVER";
     private String score_msg = "SCORE";
@@ -204,7 +204,7 @@ public class Board<T> extends JPanel {
         paddle.move();
         checkCollision();
         repaint();
-        socket.sentString(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks));
+        //socket.sentString(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks));
         //System.out.println(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks));
     }
 
