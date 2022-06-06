@@ -23,6 +23,7 @@
 /**
  * Crea un json con los puntajes de los ladrillos de cada nivel y el poder de cada uno
  *@return char* json
+ */
 char* initbricks(){
 
 
