@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import org.json.JSONObject;
 
 public class Board extends JPanel {
     private Timer timer;
@@ -36,7 +35,6 @@ public class Board extends JPanel {
     private Boolean inGame = true;
     private Integer numBalls;
     private Integer flag;
-    private String info;
     private static SocketClient socket;
     public Board() {
 
@@ -47,7 +45,6 @@ public class Board extends JPanel {
 
         setBackground(Color.DARK_GRAY);
         socket = new SocketClient("0.0.0.0", 3550);
-        info = socket.receiveString();
         addKeyListener(new TAdapter());
         setFocusable(true);
         setPreferredSize(new Dimension(Commons.WIDTH, Commons.HEIGHT));
@@ -60,7 +57,7 @@ public class Board extends JPanel {
     private void gameInit(Integer scr, Integer lvs, Integer lvl, Integer balls, Brick[] bricks1) {
 
         numBalls = balls;
-        System.out.println(info);
+        //System.out.println(numBalls);
         ball = new Ball[numBalls];
 
         for (Integer i = 0; i < ball.length; i++) {
