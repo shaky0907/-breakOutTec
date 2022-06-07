@@ -210,8 +210,8 @@ public class Board extends JPanel {
         checkCollision();
         repaint();
         socket.sentString(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks));
-        //String received = socket.receiveString();
-        //System.out.println(received);
+        String received = socket.receiveString();
+        System.out.println(received);
     }
 
     private void stopGame() {

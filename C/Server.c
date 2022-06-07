@@ -124,8 +124,12 @@ int main() {
                     Lee_Socket(socketCliente[i], cadena, longitudCadena);
                     printf("Cliente %d envia %s\n", i + 1, cadena);
 
+                    auxiliar = htonl(4);
+                    Escribe_Socket(socketCliente[i], (char *)&auxiliar, sizeof(int));
+                    Escribe_Socket(socketCliente[i], "hola", 4);
+
                     ///Se envia datos a los clientes observadores
-                    for(int j = 0; j < numeroClientes; j++)
+                    /*for(int j = 0; j < numeroClientes; j++)
                     {
                         if(i != j)
                         {
@@ -144,7 +148,7 @@ int main() {
                             Escribe_Socket(socketCliente[j], cadena, longitudCadena);
                             printf("Servidor C: Enviado %s a Cliente Observador\n", cadena);
                         }
-                    }
+                    }*/
 
                 }
                 else
