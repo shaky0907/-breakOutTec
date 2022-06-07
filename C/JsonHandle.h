@@ -48,6 +48,20 @@ void jsonParserCliente(char msg[]){
     printf("powers: %s\n", json_object_get_string(lvl));
 };
 
+int jsonParserType(char msg[]){
+    struct json_object *parsed_json;
+    struct json_object *type;
+
+
+    size_t n_friends;
+    size_t i;
+
+    ///Extraer objetos del json
+    parsed_json = json_tokener_parse(msg);
+    json_object_object_get_ex(parsed_json,"scores",&type);
+    int typenum = json_object_get_int(type);
+    return typenum;
+};
 
 
 /**
