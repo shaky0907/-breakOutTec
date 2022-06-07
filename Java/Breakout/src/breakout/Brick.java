@@ -7,17 +7,18 @@ public class Brick extends Sprite {
 
     private Boolean destroyed;
 
-    public Brick(Integer x, Integer y, String color, Integer value) {
+    public Brick(Integer x, Integer y, String color, Integer value, Integer power) {
         
-        initBrick(x, y, color, value);
+        initBrick(x, y, color, value, power);
     }
     
-    private void initBrick(Integer x, Integer y, String color, Integer value) {
+    private void initBrick(Integer x, Integer y, String color, Integer value, Integer power) {
         
         this.x = x;
         this.y = y;
         this.color = color;
         this.value = value;
+        this.power = power;
         
         destroyed = false;
 
@@ -39,5 +40,9 @@ public class Brick extends Sprite {
     void setDestroyed(Boolean val) {
         
         destroyed = val;
+    }
+
+    void setColor(String color){
+        loadImage(color);
     }
 }

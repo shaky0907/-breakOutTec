@@ -110,6 +110,7 @@ int main() {
         select(maximo + 1, &descriptoresLectura, NULL, NULL, NULL);
 
         ///Se comprueba si algun cliente ya conectado envia algo.
+
         for(i = 0; i < numeroClientes; i++)
         {
             if(FD_ISSET (socketCliente[i], &descriptoresLectura))
@@ -124,12 +125,17 @@ int main() {
                     Lee_Socket(socketCliente[i], cadena, longitudCadena);
                     printf("Cliente %d envia %s\n", i + 1, cadena);
 
-                    auxiliar = htonl(4);
-                    Escribe_Socket(socketCliente[i], (char *)&auxiliar, sizeof(int));
-                    Escribe_Socket(socketCliente[i], "hola", 4);
+                    int type = jsonParserType(cadena);
+                    if (type == 1) {
+                        char* bricks = initbricks();
+                        int largoBricks = htonl(263);
+                        Escribe_Socket(socketCliente[i], (char *)&largoBricks, sizeof(int));
+                        Escribe_Socket(socketCliente[i], bricks, largoBricks);
+                    }
+
 
                     ///Se envia datos a los clientes observadores
-                    /*for(int j = 0; j < numeroClientes; j++)
+                    for(int j = 0; j < numeroClientes; j++)
                     {
                         if(i != j)
                         {
@@ -142,13 +148,13 @@ int main() {
 
                             ///Se envia el entero transformado
                             Escribe_Socket(socketCliente[j], (char *)&auxiliar, sizeof(int));
-                            printf("Servidor C: Enviado %d a Cliente Observador\n", longitudCadena -1);
+                            //printf("Servidor C: Enviado %d a Cliente Observador\n", longitudCadena -1);
 
                             ///Se envia la cadena recibida
                             Escribe_Socket(socketCliente[j], cadena, longitudCadena);
                             printf("Servidor C: Enviado %s a Cliente Observador\n", cadena);
                         }
-                    }*/
+                    }
 
                 }
                 else

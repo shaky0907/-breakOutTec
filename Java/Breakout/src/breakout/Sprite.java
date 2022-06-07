@@ -9,6 +9,7 @@ public class Sprite {
     Integer y;
     String color;
     Integer value;
+    Integer power;
     Integer imageWidth;
     Integer imageHeight;
     Image image;

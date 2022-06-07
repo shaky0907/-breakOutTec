@@ -1,5 +1,7 @@
 package breakout;
 
+import org.json.JSONException;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -18,14 +20,28 @@ public class MenuScreen extends JFrame{
         WATCHButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                EventQueue.invokeLater(() -> {
+                    Breakout game = null;
+                    try {
+                        game = new Breakout(2);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    game.setVisible(true);
+                });
+                MenuScreen.this.dispose();
             }
         });
         PLAYButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 EventQueue.invokeLater(() -> {
-                    var game = new Breakout();
+                    Breakout game = null;
+                    try {
+                        game = new Breakout(1);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
                     game.setVisible(true);
                 });
                 MenuScreen.this.dispose();

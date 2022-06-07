@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -36,23 +37,42 @@ public class Board extends JPanel {
     private Boolean inGame = true;
     private Integer numBalls;
     private Integer flag;
+    private Integer[] scoresArr;
+    private Integer[] powersArr;
     private static SocketClient socket;
-    public Board() {
+    public Board() throws JSONException {
 
         initBoard();
     }
 
-    private void initBoard() {
+    private void initBoard() throws JSONException {
 
         setBackground(Color.DARK_GRAY);
-        socket = new SocketClient("0.0.0.0", 3550);
         addKeyListener(new TAdapter());
         setFocusable(true);
         setPreferredSize(new Dimension(Commons.WIDTH, Commons.HEIGHT));
+        socket = new SocketClient("0.0.0.0", 3550);
+        socket.sentString("{\"type\": 1 }");
+        String info = socket.receiveString();
+        JSONObject json = new JSONObject(info);
+        String scores = json.getString("scores");
+        String powers = json.getString("power");
+        String[] scoresArray = scores.split(",");
+        String[] powersArray = powers.split(",");
+        Integer size = scoresArray.length;
+        scoresArr = new Integer[size];
+        for(Integer i=0; i<size; i++) {
+            scoresArr[i] = Integer.parseInt(scoresArray[i]);
+        }
+        size = powersArray.length;
+        powersArr = new Integer[size];
+        for(Integer i=0; i<size; i++) {
+            powersArr[i] = Integer.parseInt(powersArray[i]);
+        }
         flag = 0;
         this.bricks = new Brick[Commons.N_OF_BRICKS];
 
-        gameInit(0, 3 ,1, 1, bricks);
+        gameInit(0, 3 ,1, 3, bricks);
     }
 
     private void gameInit(Integer scr, Integer lvs, Integer lvl, Integer balls, Brick[] bricks1) {
@@ -61,7 +81,7 @@ public class Board extends JPanel {
         //System.out.println(numBalls);
         ball = new Ball[numBalls];
 
-        for (Integer i = 0; i < ball.length; i++) {
+        for (Integer i = 0; i < numBalls; i++) {
 
             ball[i] = new Ball(lvl, lvl * -1);
         }
@@ -78,16 +98,16 @@ public class Board extends JPanel {
             for (Integer i = 0; i < 8; i++) {
                 for (Integer j = 0; j < 14; j++) {
                     if (i < 2) {
-                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "red", 400);
+                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "red", scoresArr[3], powersArr[k]);
                         k++;
                     } else if (i < 4) {
-                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "orange", 300);
+                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "orange", scoresArr[2], powersArr[k]);
                         k++;
                     } else if (i < 6) {
-                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "yellow", 200);
+                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "yellow", scoresArr[1], powersArr[k]);
                         k++;
                     } else {
-                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "green", 100);
+                        bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "green", scoresArr[0], powersArr[k]);
                         k++;
                     }
                 }
@@ -210,8 +230,6 @@ public class Board extends JPanel {
         checkCollision();
         repaint();
         socket.sentString(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks));
-        String received = socket.receiveString();
-        System.out.println(received);
     }
 
     private void stopGame() {
@@ -227,13 +245,13 @@ public class Board extends JPanel {
                 continue;
             }
             if (value.getRect().getMaxY() > Commons.BOTTOM_EDGE) {
-                if (ballsLeft > 0 && numBalls == 1) {
+                if (ballsLeft > 1 && numBalls == 1) {
                     timer.stop();
                     ballsLeft--;
                     flag++;
                     gameInit(score, ballsLeft, level, numBalls, bricks);
                 }
-                else if (ballsLeft > 0 && numBalls > 1) {
+                else if (ballsLeft > 1 && numBalls > 1) {
                     List<Ball> list = new ArrayList<Ball>((Collection<? extends Ball>) Arrays.asList(ball));
                     list.remove(value);
                     ball = list.toArray(ball);
@@ -351,14 +369,14 @@ public class Board extends JPanel {
         }
     }
     String parseJson(Integer lives, Integer score, Integer numBalls, Integer level, Paddle paddle, Ball[] ball, Brick[] bricks){
-        String paddlePos = "[";
-        StringBuilder ballsPos = new StringBuilder("[");
-        StringBuilder bricksLeft = new StringBuilder("[");
+        String paddlePos = "\"";
+        StringBuilder ballsPos = new StringBuilder("\"");
+        StringBuilder bricksLeft = new StringBuilder("\"");
         String json = "";
 
-        System.out.println(json);
+        //System.out.println(json);
 
-        paddlePos += paddle.getX().toString() + "," + paddle.getY().toString() + "]";
+        paddlePos += paddle.getX().toString() + "," + paddle.getY().toString() + "\"";
 
         for (Integer i = 0;  i < numBalls; i++){
             if (ball[i] != null) {
@@ -369,7 +387,7 @@ public class Board extends JPanel {
                 }
             }
         }
-        ballsPos.append("]");
+        ballsPos.append("\"");
 
 
         for (Integer i = 0; i < 112; i++){
@@ -382,7 +400,7 @@ public class Board extends JPanel {
                 }
             }
         }
-        bricksLeft.append("]");
+        bricksLeft.append("\"");
 
         json =
                 "{ \"lives\": " + lives.toString() +
