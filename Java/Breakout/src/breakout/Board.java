@@ -400,6 +400,9 @@ public class Board extends JPanel {
                 }
             }
         }
+        if (bricksLeft.charAt(bricksLeft.length() - 1 ) == ',') {
+            bricksLeft = new StringBuilder(bricksLeft.substring(0, bricksLeft.length() - 1));
+        }
         bricksLeft.append("\"");
 
         json =

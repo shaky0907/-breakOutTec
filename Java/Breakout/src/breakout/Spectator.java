@@ -162,7 +162,16 @@ public class Spectator extends JPanel {
     private void doSpectatorCycle() throws JSONException {
         String info = socket.receiveString();
         JSONObject json = new JSONObject(info);
-        ballsLeft = json.getInt("lives");
+        Integer livesLeft = json.getInt("lives");
+        if (livesLeft < ballsLeft) {
+            /*for (Integer j = 0; j < 112; j++){
+                bricks[j] = null;
+            }*/
+            for (Integer j = 0; j < 10; j++){
+                ball[j] = null;
+            }
+            ballsLeft = livesLeft;
+        }
         score = json.getInt("score");
         level = json.getInt("level");
         numBalls = json.getInt("numBalls");
@@ -187,12 +196,18 @@ public class Spectator extends JPanel {
         for(Integer i=0; i<bricksLeftArray.length; i++) {
             bricksLeftArr[i] = Integer.parseInt(bricksLeftArray[i]);
         }
+        Integer[] bricksNumLeftArr = new Integer[112];
+        for(Integer i=0; i < bricksLeftArr.length / 3; i++) {
+            bricksNumLeftArr[i] = bricksLeftArr[i * 3];
+        }
+        System.out.println(Arrays.toString(bricksNumLeftArr));
 
         paddle.setX(paddlePosArr[0]);
         paddle.setY(paddlePosArr[1]);
 
         for (Integer j = 0; j < 112; j++){
-            if (contains(bricksLeftArr, j) && bricks[j] == null){
+            if (contains(bricksNumLeftArr, j) && bricks[j] == null){
+                System.out.println("Adding brick on j: " + j);
                 if (j < 28) {
                     bricks[j] = new Brick(bricksLeftArr[(j * 3) + 1],bricksLeftArr[(j * 3) + 2],"red", 0,0);
                 }
@@ -206,13 +221,13 @@ public class Spectator extends JPanel {
                     bricks[j] = new Brick(bricksLeftArr[(j * 3) + 1],bricksLeftArr[(j * 3) + 2],"green", 0,0);
                 }
             }
-            if (!contains(bricksLeftArr, j) && bricks[j] != null) {
+            if (!contains(bricksNumLeftArr, j) && bricks[j] != null) {
                 bricks[j] = null;
             }
         }
 
         for (Integer j = 0; j < ballsPosArr.length / 3; j++){
-            System.out.println(Arrays.toString(ballsPosArr));
+            //System.out.println(Arrays.toString(ballsPosArr));
             if (ball[j] != null && !ballsPosArr[j*3].equals(j)) {
                 ball[j] = null;
             }
