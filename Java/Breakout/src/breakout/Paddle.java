@@ -7,6 +7,7 @@ import java.lang.*;
 public class Paddle extends Sprite  {
 
     private Integer dx = 0;
+    private Integer size = 2;
 
     public Paddle() {
         
@@ -85,4 +86,28 @@ public class Paddle extends Sprite  {
     Integer getY(){
         return y;
     }
+
+    void change_size(Integer sizel){
+        this.size = sizel;
+        switch (this.size){
+            case 0:
+                var ii = new ImageIcon("src/resources/paddlesmall.png");
+                image = ii.getImage();
+                break;
+            case 1:
+                var ii2 = new ImageIcon("src/resources/paddle.png");
+                image = ii2.getImage();
+                break;
+            case 2:
+                var ii3 = new ImageIcon("src/resources/paddlebig.png");
+                image = ii3.getImage();
+                break;
+        }
+    };
+
+    Integer get_size(){
+        return this.size;
+    };
 }
+
+

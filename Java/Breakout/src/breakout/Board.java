@@ -31,6 +31,7 @@ public class Board extends JPanel {
     private Integer ballsLeft;
     private String level_msg = "LEVEL";
     private Integer level;
+
     private Ball[] ball;
     private Paddle paddle;
     private Brick[] bricks;
@@ -72,7 +73,7 @@ public class Board extends JPanel {
         flag = 0;
         this.bricks = new Brick[Commons.N_OF_BRICKS];
 
-        gameInit(0, 3 ,1, 3, bricks);
+        gameInit(0, 3 ,1, 1, bricks);
     }
 
     private void gameInit(Integer scr, Integer lvs, Integer lvl, Integer balls, Brick[] bricks1) {
@@ -363,6 +364,50 @@ public class Board extends JPanel {
 
                         score += bricks[i].getValue();
                         bricks[i].setDestroyed(true);
+                        Integer power = bricks[i].get_power();
+                        switch (power){
+                            case 1:
+                                //Incrementa la cantidad de vidas
+                                ballsLeft++;
+                                break;
+                            case 2:
+                                //incrementa la cantidad de bolas en el board
+                                Ball new_ball = new Ball(level, level * -1);
+                                List<Ball> list = new ArrayList<Ball>((Collection<? extends Ball>) Arrays.asList(ball));
+                                list.add(new_ball);
+                                ball = list.toArray(ball);
+                                break;
+                            case 3:
+                                //duplicar tamaño
+                                if(paddle.get_size() < 2){
+                                    paddle.change_size(paddle.get_size()+1);
+                                }
+                                break;
+                            case 4:
+                                //disminuir tamaño
+                                if(paddle.get_size() > 0){
+                                    paddle.change_size(paddle.get_size()-1);
+                                }
+                                break;
+                            case 5:
+                                //aumentar velocidad
+                                for (Ball bola : ball) {
+                                    bola.setXDir(bola.getXDir()+1);
+                                    bola.setYDir(bola.getYDir()+1);
+                                }
+                                break;
+                            case 6:
+                                //disminuir velocidad
+                                for (Ball bola : ball) {
+                                    if(bola.getXDir() != 1){
+                                        bola.setXDir(bola.getXDir()-1);
+                                    }
+                                    if(bola.getYDir() != 1) {
+                                        bola.setXDir(bola.getXDir() - 1);
+                                    }
+                                }
+                                break;
+                        }
                     }
                 }
             }

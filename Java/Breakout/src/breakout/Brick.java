@@ -42,6 +42,9 @@ public class Brick extends Sprite {
         destroyed = val;
     }
 
+    int get_power(){
+      return this.power;
+    };
     void setColor(String color){
         loadImage(color);
     }
