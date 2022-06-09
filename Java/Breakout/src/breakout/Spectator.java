@@ -31,7 +31,8 @@ public class Spectator extends JPanel {
     private Integer bricksLeft;
     private static SocketClient socket;
     public Spectator() throws JSONException {
-
+        socket = new SocketClient("0.0.0.0", 3550);
+        socket.sentString("{\"type\": 2 }");
         initSpectator();
     }
 
@@ -41,12 +42,10 @@ public class Spectator extends JPanel {
         setFocusable(true);
         setPreferredSize(new Dimension(Commons.WIDTH, Commons.HEIGHT));
 
-        socket = new SocketClient("0.0.0.0", 3550);
-        socket.sentString("{\"type\": 2 }");
-
         ballsLeft = 3;
         score = 0;
         level = 1;
+        numBalls = 1;
 
         paddle = new Paddle();
         bricks = new Brick[Commons.N_OF_BRICKS];
@@ -60,8 +59,19 @@ public class Spectator extends JPanel {
 
         for (Integer i = 0; i < 8; i++) {
             for (Integer j = 0; j < 14; j++) {
-                bricks[k] = null;
-                k++;
+                if (i < 2) {
+                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "red", 0, 0);
+                    k++;
+                } else if (i < 4) {
+                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "orange", 0, 0);
+                    k++;
+                } else if (i < 6) {
+                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "yellow", 0, 0);
+                    k++;
+                } else {
+                    bricks[k] = new Brick(j * 42 + 7, i * 7 + 50, "green", 0, 0);
+                    k++;
+                }
             }
         }
 
@@ -161,12 +171,11 @@ public class Spectator extends JPanel {
 
     private void doSpectatorCycle() throws JSONException {
         String info = socket.receiveString();
+        //System.out.println(info);
         JSONObject json = new JSONObject(info);
         Integer livesLeft = json.getInt("lives");
-        if (livesLeft < ballsLeft) {
-            /*for (Integer j = 0; j < 112; j++){
-                bricks[j] = null;
-            }*/
+        Integer numBallsLeft = json.getInt("numBalls");
+        if (livesLeft < ballsLeft || numBallsLeft < numBalls) {
             for (Integer j = 0; j < 10; j++){
                 ball[j] = null;
             }
@@ -182,7 +191,6 @@ public class Spectator extends JPanel {
 
         String[] paddlePosArray = paddlePos.split(",");
         String[] ballsPosArray = ballsPos.split(",");
-        String[] bricksLeftArray = bricksLeft.split(",");
 
         paddlePosArr = new Integer[paddlePosArray.length];
         for(Integer i=0; i<paddlePosArray.length; i++) {
@@ -192,52 +200,45 @@ public class Spectator extends JPanel {
         for(Integer i=0; i<ballsPosArray.length; i++) {
             ballsPosArr[i] = Integer.parseInt(ballsPosArray[i]);
         }
-        bricksLeftArr = new Integer[bricksLeftArray.length];
-        for(Integer i=0; i<bricksLeftArray.length; i++) {
-            bricksLeftArr[i] = Integer.parseInt(bricksLeftArray[i]);
-        }
-        Integer[] bricksNumLeftArr = new Integer[112];
-        for(Integer i=0; i < bricksLeftArr.length / 3; i++) {
-            bricksNumLeftArr[i] = bricksLeftArr[i * 3];
-        }
-        System.out.println(Arrays.toString(bricksNumLeftArr));
+        //System.out.println(Arrays.toString(bricksNumLeftArr));
 
         paddle.setX(paddlePosArr[0]);
         paddle.setY(paddlePosArr[1]);
-
-        for (Integer j = 0; j < 112; j++){
-            if (contains(bricksNumLeftArr, j) && bricks[j] == null){
-                System.out.println("Adding brick on j: " + j);
-                if (j < 28) {
-                    bricks[j] = new Brick(bricksLeftArr[(j * 3) + 1],bricksLeftArr[(j * 3) + 2],"red", 0,0);
-                }
-                else if (j < 56) {
-                    bricks[j] = new Brick(bricksLeftArr[(j * 3) + 1],bricksLeftArr[(j * 3) + 2],"orange", 0,0);
-                }
-                else if (j < 84) {
-                    bricks[j] = new Brick(bricksLeftArr[(j * 3) + 1],bricksLeftArr[(j * 3) + 2],"yellow", 0,0);
-                }
-                else {
-                    bricks[j] = new Brick(bricksLeftArr[(j * 3) + 1],bricksLeftArr[(j * 3) + 2],"green", 0,0);
-                }
+        if (bricksLeft.equals("")) {
+            initSpectator();
+        }
+        else {
+            String[] bricksLeftArray = bricksLeft.split(",");
+            bricksLeftArr = new Integer[bricksLeftArray.length];
+            for(Integer i=0; i<bricksLeftArray.length; i++) {
+                bricksLeftArr[i] = Integer.parseInt(bricksLeftArray[i]);
             }
-            if (!contains(bricksNumLeftArr, j) && bricks[j] != null) {
-                bricks[j] = null;
+            Integer[] bricksNumLeftArr = new Integer[112];
+            for(Integer i=0; i < bricksLeftArr.length / 3; i++) {
+                bricksNumLeftArr[i] = bricksLeftArr[i * 3];
+            }
+            for (Integer j = 0; j < 112; j++){
+                if (!contains(bricksNumLeftArr, j) && bricks[j] != null) {
+                    bricks[j] = null;
+                }
             }
         }
 
         for (Integer j = 0; j < ballsPosArr.length / 3; j++){
             //System.out.println(Arrays.toString(ballsPosArr));
             if (ball[j] != null && !ballsPosArr[j*3].equals(j)) {
+                //System.out.println("made ball null");
                 ball[j] = null;
             }
             if (ball[j] == null && ballsPosArr[j*3].equals(j)) {
+                //System.out.println("drawing new ball");
                 ball[j] = new Ball(0,0);
                 ball[j].setX(ballsPosArr[(j * 3) + 1]);
                 ball[j].setY(ballsPosArr[(j * 3) + 2]);
                 break;
             }
             else if (ball[j] != null && ballsPosArr[j*3].equals(j)) {
+                //System.out.println("updating ball");
                 ball[j].setX(ballsPosArr[(j * 3) + 1]);
                 ball[j].setY(ballsPosArr[(j * 3) + 2]);
             }
@@ -247,5 +248,31 @@ public class Spectator extends JPanel {
     }
     private static Boolean contains(final Integer[] arr, final Integer key){
         return Arrays.stream(arr).anyMatch(i -> i == key);
+    }
+    private static Integer findIndex(Integer arr[], Integer t)
+    {
+
+        // if array is Null
+        if (arr == null) {
+            return -1;
+        }
+
+        // find length of array
+        Integer len = arr.length;
+        Integer i = 0;
+
+        // traverse in the array
+        while (i < len) {
+
+            // if the i-th element is t
+            // then return the index
+            if (arr[i] == t) {
+                return i;
+            }
+            else {
+                i = i + 1;
+            }
+        }
+        return -1;
     }
 }

@@ -41,7 +41,7 @@ char* initbricks(){
 
     json = generateJSONINIT(score,poderes);
 
-    jsonParserCliente(json);
+    //jsonParserCliente(json);
 
     return json;
 
@@ -126,9 +126,11 @@ int main() {
                     printf("Cliente %d envia %s\n", i + 1, cadena);
 
                     int type = jsonParserType(cadena);
+                    printf("type: %i\n",type);
                     if (type == 1) {
                         char* bricks = initbricks();
                         int largoBricks = htonl(263);
+                        printf("bricks enviados: %s\n",bricks);
                         Escribe_Socket(socketCliente[i], (char *)&largoBricks, sizeof(int));
                         Escribe_Socket(socketCliente[i], bricks, largoBricks);
                     }
