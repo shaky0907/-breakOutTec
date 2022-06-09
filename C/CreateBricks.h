@@ -18,7 +18,7 @@ int * createpower_array(){
     srand(time(NULL));
     for(int i = 0; i < 112; i++){
 
-        int r = rand() % 7;
+        int r = rand() % 5;
         if(r == 0) {
             int r_new = rand() % 6 + 1;
 

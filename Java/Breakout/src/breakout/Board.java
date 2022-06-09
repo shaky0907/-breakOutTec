@@ -1,7 +1,6 @@
 package breakout;
 
-import javax.swing.JPanel;
-import javax.swing.Timer;
+import javax.swing.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -20,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.json.*;
 
 public class Board extends JPanel {
@@ -41,6 +42,8 @@ public class Board extends JPanel {
     private Integer[] scoresArr;
     private Integer[] powersArr;
     private static SocketClient socket;
+    private String lastPower;
+    private Boolean frozen;
     public Board() throws JSONException {
 
         initBoard();
@@ -55,6 +58,7 @@ public class Board extends JPanel {
         socket = new SocketClient("0.0.0.0", 3550);
         socket.sentString("{\"type\": 1 }");
         String info = socket.receiveString();
+        System.out.println(info);
         JSONObject json = new JSONObject(info);
         String scores = json.getString("scores");
         String powers = json.getString("power");
@@ -72,21 +76,21 @@ public class Board extends JPanel {
         }
         flag = 0;
         this.bricks = new Brick[Commons.N_OF_BRICKS];
-
-        gameInit(0, 3 ,1, 7, bricks);
+        lastPower = "none";
+        paddle = new Paddle("normal");
+        ball = new Ball[5];
+        frozen = false;
+        gameInit(0, 3 ,1, 1, bricks);
     }
 
     private void gameInit(Integer scr, Integer lvs, Integer lvl, Integer balls, Brick[] bricks1) {
 
         numBalls = balls;
-        //System.out.println(numBalls);
-        ball = new Ball[numBalls];
 
         for (Integer i = 0; i < numBalls; i++) {
-
             ball[i] = new Ball(lvl, lvl * -1);
         }
-        paddle = new Paddle();
+
         score = scr;
         ballsLeft = lvs;
         level = lvl;
@@ -158,18 +162,27 @@ public class Board extends JPanel {
         FontMetrics fontMetrics = this.getFontMetrics(font1);
         var font2 = new Font("Verdana", Font.BOLD, 18);
         FontMetrics fontMetrics2 = this.getFontMetrics(font2);
+        var font3 = new Font("Verdana", Font.BOLD, 36);
+        FontMetrics fontMetrics3 = this.getFontMetrics(font3);
 
         g2d.setColor(Color.WHITE);
         g2d.setFont(font1);
 
         g2d.drawString(score_msg, 5, 15);
-        g2d.drawString(ballsLeft_msg, (Commons.WIDTH / 2) - (fontMetrics.stringWidth(ballsLeft_msg) / 2), 15);
+        g2d.drawString(ballsLeft_msg, (Commons.WIDTH - fontMetrics.stringWidth(ballsLeft_msg)) / 2, 15);
         g2d.drawString(level_msg, (Commons.WIDTH -5) - fontMetrics.stringWidth(level_msg), 15);
 
         g2d.setFont(font2);
         g2d.drawString(score.toString(), 5, 35);
-        g2d.drawString(ballsLeft.toString() + "/3", (Commons.WIDTH / 2) - (fontMetrics.stringWidth(ballsLeft_msg) / 2), 35);
-        g2d.drawString(level.toString(), (Commons.WIDTH -5) - fontMetrics.stringWidth(level.toString()), 35);
+        g2d.drawString(ballsLeft.toString() + "/3", (Commons.WIDTH / 2) - (fontMetrics2.stringWidth(ballsLeft_msg) / 2), 35);
+        g2d.drawString(level.toString(), (Commons.WIDTH -5) - fontMetrics2.stringWidth(level.toString()), 35);
+        g2d.drawString("LAST POWER: " + lastPower, (Commons.WIDTH / 2) - fontMetrics.stringWidth("LAST POWER: " + lastPower), (Commons.HEIGHT - 15));
+
+        if (frozen) {
+            g2d.setFont(font3);
+            g2d.drawString("PAUSED", (Commons.WIDTH / 2) - fontMetrics2.stringWidth("PAUSED"), ((Commons.HEIGHT / 2 - 15)));
+            timer.stop();
+        }
 
         for (Integer i = 0; i < Commons.N_OF_BRICKS; i++) {
 
@@ -192,6 +205,19 @@ public class Board extends JPanel {
         g2d.drawString(message,
                 (Commons.WIDTH - fontMetrics.stringWidth(message)) / 2,
                 Commons.HEIGHT / 2 - 20);
+        /*try {
+            Thread.sleep(5000);
+            socket.disconnect();
+            MenuScreen m = new MenuScreen();
+            m.setContentPane(m.panel1);
+            m.setSize(900,600);
+            m.setVisible(true);
+            m.setTitle("Menu");
+            m.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setVisible(false);
+            System.exit(0);
+        }
+        catch (Exception ignore) {}*/
     }
 
     private class TAdapter extends KeyAdapter {
@@ -206,6 +232,14 @@ public class Board extends JPanel {
         public void keyPressed(KeyEvent e) {
 
             paddle.keyPressed(e);
+            Integer key = e.getKeyCode();
+            if (key == KeyEvent.VK_SPACE && !frozen){
+                frozen = true;
+            }
+            else if (key == KeyEvent.VK_SPACE && frozen){
+                timer.start();
+                frozen = false;
+            }
         }
     }
 
@@ -232,7 +266,7 @@ public class Board extends JPanel {
         paddle.move();
         checkCollision();
         repaint();
-        socket.sentString(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks));
+        socket.sentString(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks, lastPower));
     }
 
     private void stopGame() {
@@ -243,11 +277,11 @@ public class Board extends JPanel {
 
     private void checkCollision() throws JSONException {
 
-        for (Ball value : ball) {
-            if (value == null) {
+        for (Integer i = 0; i < 5; i++) {
+            if (ball[i] == null) {
                 continue;
             }
-            if (value.getRect().getMaxY() > Commons.BOTTOM_EDGE) {
+            if (ball[i].getRect().getMaxY() > Commons.BOTTOM_EDGE) {
                 if (ballsLeft > 1 && numBalls == 1) {
                     timer.stop();
                     ballsLeft--;
@@ -255,12 +289,11 @@ public class Board extends JPanel {
                     gameInit(score, ballsLeft, level, numBalls, bricks);
                 }
                 else if (ballsLeft > 1 && numBalls > 1) {
-                    List<Ball> list = new ArrayList<Ball>((Collection<? extends Ball>) Arrays.asList(ball));
-                    list.remove(value);
-                    ball = list.toArray(ball);
+                    ball[i] = null;
                     numBalls--;
                 }
                 else {
+                    socket.sentString("lost");
                     stopGame();
                 }
             }
@@ -268,7 +301,6 @@ public class Board extends JPanel {
         for (Integer i = 0, j = 0; i < Commons.N_OF_BRICKS; i++) {
 
             if (bricks[i].isDestroyed()) {
-
                 j++;
             }
 
@@ -277,21 +309,24 @@ public class Board extends JPanel {
                 timer.stop();
                 level++;
                 flag = 0;
+                socket.disconnect();
+                socket = new SocketClient("0.0.0.0", 3550);
                 socket.sentString("{\"type\": 1 }");
                 String info = socket.receiveString();
-                System.out.println(info);
                 JSONObject json = new JSONObject(info);
                 String scores = json.getString("scores");
                 String powers = json.getString("power");
                 String[] scoresArray = scores.split(",");
                 String[] powersArray = powers.split(",");
-                scoresArr = new Integer[scoresArray.length];
-                for(Integer l=0; l<scoresArray.length; l++) {
-                    scoresArr[i] = Integer.parseInt(scoresArray[l]);
+                Integer size = scoresArray.length;
+                scoresArr = new Integer[size];
+                for(Integer k=0; k<size; k++) {
+                    scoresArr[k] = Integer.parseInt(scoresArray[k]);
                 }
-                powersArr = new Integer[powersArray.length];
-                for(Integer l=0; l<powersArray.length; l++) {
-                    powersArr[l] = Integer.parseInt(powersArray[l]);
+                size = powersArray.length;
+                powersArr = new Integer[size];
+                for(Integer k=0; k<size; k++) {
+                    powersArr[k] = Integer.parseInt(powersArray[k]);
                 }
                 gameInit(score, ballsLeft ,level, numBalls, bricks);
             }
@@ -312,7 +347,6 @@ public class Board extends JPanel {
                 Double fourth = paddleLPos + (paddle.getRect().getWidth()/5)*4;
 
                 if (ballLPos < first) {
-
                     value.setXDir((value.getInitialXDir() * -1) - 1);
                     value.setYDir(value.getInitialYDir());
                 }
@@ -386,43 +420,102 @@ public class Board extends JPanel {
                             case 1:
                                 //Incrementa la cantidad de vidas
                                 ballsLeft++;
+                                lastPower = "Added new life";
                                 break;
                             case 2:
                                 //incrementa la cantidad de bolas en el board
-                                Ball new_ball = new Ball(level, level * -1);
-                                List<Ball> list = new ArrayList<Ball>((Collection<? extends Ball>) Arrays.asList(ball));
-                                list.add(new_ball);
-                                ball = list.toArray(ball);
+                                if (numBalls < 5) {
+                                    /*Ball new_ball = new Ball(level, level * -1);
+                                    List<Ball> list = new ArrayList<Ball>((Collection<? extends Ball>) Arrays.asList(ball));
+                                    list.add(new_ball);*/
+                                    for (Integer a = 0; a < 5; a++){
+                                        if (ball[a] == null){
+                                            ball[a] = new Ball(level, level * -1);
+                                            break;
+                                        }
+                                    }
+                                    numBalls++;
+                                    lastPower = "Added new ball";
+                                }
                                 break;
                             case 3:
                                 //duplicar tamaño
-                                if(paddle.get_size() < 2){
-                                    paddle.change_size(paddle.get_size()+1);
+                                if (paddle.get_size() == 1){
+                                    Integer x = paddle.getX();
+                                    Integer y = paddle.getY();
+                                    paddle = new Paddle("big");
+                                    paddle.setX(x);
+                                    paddle.setY(y);
+                                    paddle.set_size(2);
                                 }
+                                else if (paddle.get_size() == 0) {
+                                    Integer x = paddle.getX();
+                                    Integer y = paddle.getY();
+                                    paddle = new Paddle ("normal");
+                                    paddle.setX(x);
+                                    paddle.setY(y);
+                                    paddle.set_size(1);
+                                }
+                                lastPower = "Doubled paddle size";
                                 break;
                             case 4:
                                 //disminuir tamaño
-                                if(paddle.get_size() > 0){
-                                    paddle.change_size(paddle.get_size()-1);
+                                if (paddle.get_size() == 1){
+                                    Integer x = paddle.getX();
+                                    Integer y = paddle.getY();
+                                    paddle = new Paddle("small");
+                                    paddle.setX(x);
+                                    paddle.setY(y);
+                                    paddle.set_size(0);
                                 }
+                                else if (paddle.get_size() == 2) {
+                                    Integer x = paddle.getX();
+                                    Integer y = paddle.getY();
+                                    paddle = new Paddle ("normal");
+                                    paddle.setX(x);
+                                    paddle.setY(y);
+                                    paddle.set_size(1);
+                                }
+                                lastPower = "Halfed paddle size";
                                 break;
                             case 5:
                                 //aumentar velocidad
                                 for (Ball bola : ball) {
-                                    bola.setXDir(bola.getXDir()+1);
-                                    bola.setYDir(bola.getYDir()+1);
+                                    if (bola != null) {
+                                        bola.setInitialXDir(bola.getInitialXDir() + 1);
+                                        bola.setInitialYDir(bola.getInitialYDir() - 1);
+                                        if (bola.getXDir() > 0)
+                                            bola.setXDir(bola.getXDir() + 1);
+                                        else
+                                            bola.setXDir(bola.getXDir() - 1);
+                                        if (bola.getYDir() < 0)
+                                            bola.setYDir(bola.getYDir() - 1);
+                                        else
+                                            bola.setYDir(bola.getYDir() + 1);
+
+                                    }
                                 }
+                                lastPower = "Increased ball speed";
                                 break;
                             case 6:
                                 //disminuir velocidad
                                 for (Ball bola : ball) {
-                                    if(bola.getXDir() != 1){
-                                        bola.setXDir(bola.getXDir()-1);
-                                    }
-                                    if(bola.getYDir() != 1) {
-                                        bola.setXDir(bola.getXDir() - 1);
+                                    if (bola != null) {
+                                        if (bola.getInitialXDir() > 1 && bola.getInitialYDir() < -1) {
+                                            bola.setInitialXDir(bola.getInitialXDir() - 1);
+                                            bola.setInitialYDir(bola.getInitialYDir() + 1);
+                                            if (bola.getXDir() > 1)
+                                                bola.setXDir(bola.getXDir() - 1);
+                                            else if (bola.getXDir() < -1)
+                                                bola.setXDir(bola.getXDir() + 1);
+                                            if (bola.getYDir() > 1)
+                                                bola.setYDir(bola.getYDir() - 1);
+                                            else if (bola.getYDir() < -1)
+                                                bola.setYDir(bola.getYDir() + 1);
+                                        }
                                     }
                                 }
+                                lastPower = "Decreased ball speed";
                                 break;
                         }
                     }
@@ -430,36 +523,28 @@ public class Board extends JPanel {
             }
         }
     }
-    String parseJson(Integer lives, Integer score, Integer numBalls, Integer level, Paddle paddle, Ball[] ball, Brick[] bricks){
+    String parseJson(Integer lives, Integer score, Integer numBalls, Integer level, Paddle paddle, Ball[] ball, Brick[] bricks, String lastPower){
         String paddlePos = "\"";
         StringBuilder ballsPos = new StringBuilder("\"");
         StringBuilder bricksLeft = new StringBuilder("\"");
         String json = "";
 
-        //System.out.println(json);
+        paddlePos += paddle.getX().toString() + "," + paddle.getY().toString() + "," + paddle.get_size() + "\"";
 
-        paddlePos += paddle.getX().toString() + "," + paddle.getY().toString() + "\"";
-
-        for (Integer i = 0;  i < numBalls; i++){
+        for (Integer i = 0;  i < 5; i++){
             if (ball[i] != null) {
-                if (i == numBalls - 1) {
-                    ballsPos.append(i.toString()).append(",").append(ball[i].getX().toString()).append(",").append(ball[i].getY().toString());
-                } else {
-                    ballsPos.append(i.toString()).append(",").append(ball[i].getX().toString()).append(",").append(ball[i].getY().toString()).append(",");
-                }
+                ballsPos.append(i.toString()).append(",").append(ball[i].getX().toString()).append(",").append(ball[i].getY().toString()).append(",");
             }
+        }
+        if (ballsPos.charAt(ballsPos.length() - 1 ) == ',') {
+            ballsPos = new StringBuilder(ballsPos.substring(0, ballsPos.length() - 1));
         }
         ballsPos.append("\"");
 
 
         for (Integer i = 0; i < 112; i++){
             if(!bricks[i].isDestroyed()) {
-                //System.out.println(i.toString() + "\",\"" + bricks[i].getX().toString()+ "\",\"" + bricks[i].getY().toString() + "\",\"");
-                if (i == 111) {
-                    bricksLeft.append(i.toString()).append(",").append(bricks[i].getX().toString()).append(",").append(bricks[i].getY().toString());
-                } else {
-                    bricksLeft.append(i.toString()).append(",").append(bricks[i].getX().toString()).append(",").append(bricks[i].getY().toString()).append(",");
-                }
+                bricksLeft.append(i.toString()).append(",").append(bricks[i].getX().toString()).append(",").append(bricks[i].getY().toString()).append(",");
             }
         }
         if (bricksLeft.charAt(bricksLeft.length() - 1 ) == ',') {
@@ -475,6 +560,7 @@ public class Board extends JPanel {
                 "{ \"lives\": " + lives.toString() +
                         ", \"score\": " + score.toString() +
                         ", \"level\": " + level.toString() +
+                        ", \"lastPower\": " + lastPower +
                         ", \"numBalls\": " + numBalls.toString() +
                         ", \"paddlePos\": " + paddlePos +
                         ", \"ballsPos\": " + ballsPos +

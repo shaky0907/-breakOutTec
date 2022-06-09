@@ -24,6 +24,15 @@ public class SocketClient
         }
     }
 
+    public void disconnect() {
+        try{
+            socket.close();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     public void sentString(String message)
     {

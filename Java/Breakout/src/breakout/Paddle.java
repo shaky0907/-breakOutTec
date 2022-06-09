@@ -7,24 +7,24 @@ import java.lang.*;
 public class Paddle extends Sprite  {
 
     private Integer dx = 0;
-    private Integer size = 2;
+    private Integer size = 1;
 
-    public Paddle() {
+    public Paddle(String size) {
         
-        initPaddle();        
+        initPaddle(size);
     }
     
-    private void initPaddle() {
+    private void initPaddle(String size) {
 
-        loadImage();
+        loadImage(size);
         getImageDimensions();
 
         resetState();
     }
     
-    private void loadImage() {
+    private void loadImage(String size) {
         
-        var ii = new ImageIcon("src/resources/paddle.png");
+        var ii = new ImageIcon("src/resources/paddle" + size + ".png");
         image = ii.getImage();        
     }    
 
@@ -91,16 +91,13 @@ public class Paddle extends Sprite  {
         this.size = sizel;
         switch (this.size){
             case 0:
-                var ii = new ImageIcon("src/resources/paddlesmall.png");
-                image = ii.getImage();
+                loadImage("small");
                 break;
             case 1:
-                var ii2 = new ImageIcon("src/resources/paddle.png");
-                image = ii2.getImage();
+                loadImage("normal");
                 break;
             case 2:
-                var ii3 = new ImageIcon("src/resources/paddlebig.png");
-                image = ii3.getImage();
+                loadImage("big");
                 break;
         }
     };
@@ -108,6 +105,9 @@ public class Paddle extends Sprite  {
     Integer get_size(){
         return this.size;
     };
+    void set_size(Integer size) {
+        this.size = size;
+    }
 }
 
 

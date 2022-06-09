@@ -65,6 +65,8 @@ int main() {
     int auxiliar;
     int longitudCadena;
     char cadena[1000];
+    int longitudBricks;
+    char* bricks;
 
     ///Se abre el socket servidor con su respecitvo puerto. Avisa si hay algun
     ///problema o error
@@ -128,33 +130,33 @@ int main() {
                     int type = jsonParserType(cadena);
                     printf("type: %i\n",type);
                     if (type == 1) {
-                        char* bricks = initbricks();
-                        int largoBricks = htonl(263);
+                        bricks = initbricks();
+                        printf("%lu\n", strlen(bricks));
+                        longitudBricks = htonl(strlen(bricks) + 1);
                         printf("bricks enviados: %s\n",bricks);
-                        Escribe_Socket(socketCliente[i], (char *)&largoBricks, sizeof(int));
-                        Escribe_Socket(socketCliente[i], bricks, largoBricks);
+                        Escribe_Socket(socketCliente[i], (char *)&longitudBricks, sizeof(int));
+                        Escribe_Socket(socketCliente[i], bricks, longitudBricks);
+                        free(bricks);
                     }
+                    else {
+                        ///Se envia datos a los clientes observadores
+                        for (int j = 0; j < numeroClientes; j++) {
+                            if (i != j) {
+                                ///Se envia un entero con la longitud de la cadena (incluido
+                                ///el \0 del final) y la cadena.
 
+                                ///El entero que se envia por el socket hay que transformarlo
+                                ///a formato de red
+                                auxiliar = htonl(longitudCadena);
 
-                    ///Se envia datos a los clientes observadores
-                    for(int j = 0; j < numeroClientes; j++)
-                    {
-                        if(i != j)
-                        {
-                            ///Se envia un entero con la longitud de la cadena (incluido
-                            ///el \0 del final) y la cadena.
+                                ///Se envia el entero transformado
+                                Escribe_Socket(socketCliente[j], (char *) &auxiliar, sizeof(int));
+                                //printf("Servidor C: Enviado %d a Cliente Observador\n", longitudCadena -1);
 
-                            ///El entero que se envia por el socket hay que transformarlo
-                            ///a formato de red
-                            auxiliar = htonl(longitudCadena);
-
-                            ///Se envia el entero transformado
-                            Escribe_Socket(socketCliente[j], (char *)&auxiliar, sizeof(int));
-                            //printf("Servidor C: Enviado %d a Cliente Observador\n", longitudCadena -1);
-
-                            ///Se envia la cadena recibida
-                            Escribe_Socket(socketCliente[j], cadena, longitudCadena);
-                            printf("Servidor C: Enviado %s a Cliente Observador\n", cadena);
+                                ///Se envia la cadena recibida
+                                Escribe_Socket(socketCliente[j], cadena, longitudCadena);
+                                printf("Servidor C: Enviado %s a Cliente Observador\n", cadena);
+                            }
                         }
                     }
 

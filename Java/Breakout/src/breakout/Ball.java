@@ -89,4 +89,13 @@ public class Ball extends Sprite {
 
         return initialYDir;
     }
+
+    void setInitialXDir(Integer newXDir) {
+
+        initialXDir = newXDir;
+    }
+    void setInitialYDir(Integer newYDir) {
+
+        initialYDir = newYDir;
+    }
 }

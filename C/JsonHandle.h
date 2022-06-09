@@ -70,7 +70,7 @@ char* generateJSONINIT(int score[],int power[]){
 
 
     char* json;
-    json = malloc(sizeof (char)*200);
+    json = malloc(sizeof (char)*263);
 
 
     /// formateo del json

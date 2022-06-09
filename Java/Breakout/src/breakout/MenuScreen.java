@@ -8,7 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuScreen extends JFrame{
-    private JPanel panel1;
+    public JPanel panel1;
     private JButton WATCHButton;
     private JButton PLAYButton;
     private JLabel logoLabel;

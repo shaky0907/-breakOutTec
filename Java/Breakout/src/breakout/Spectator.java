@@ -28,12 +28,13 @@ public class Spectator extends JPanel {
     private Integer[] paddlePosArr;
     private Integer[] ballsPosArr;
     private Integer[] bricksLeftArr;
-    private Integer bricksLeft;
+    private String lastPower;
     private static SocketClient socket;
     public Spectator() throws JSONException {
         socket = new SocketClient("0.0.0.0", 3550);
         socket.sentString("{\"type\": 2 }");
         initSpectator();
+        lastPower = "none";
     }
 
     private void initSpectator() throws JSONException {
@@ -47,11 +48,12 @@ public class Spectator extends JPanel {
         level = 1;
         numBalls = 1;
 
-        paddle = new Paddle();
-        bricks = new Brick[Commons.N_OF_BRICKS];
-        ball = new Ball[10];
 
-        for (Integer i = 0; i < 10; i++) {
+        paddle = new Paddle("normal");
+        bricks = new Brick[Commons.N_OF_BRICKS];
+        ball = new Ball[5];
+
+        for (Integer i = 0; i < 5; i++) {
             ball[i] = null;
         }
 
@@ -134,6 +136,7 @@ public class Spectator extends JPanel {
         g2d.drawString(score.toString(), 5, 35);
         g2d.drawString(ballsLeft.toString() + "/3", (Commons.WIDTH / 2) - (fontMetrics.stringWidth(ballsLeft_msg) / 2), 35);
         g2d.drawString(level.toString(), (Commons.WIDTH -5) - fontMetrics.stringWidth(level.toString()), 35);
+        g2d.drawString("LAST POWER: " + lastPower, (Commons.WIDTH / 2) - fontMetrics.stringWidth("LAST POWER: " + lastPower), (Commons.HEIGHT - 15));
 
         for (Brick value : bricks) {
             if (value != null) {
@@ -160,89 +163,94 @@ public class Spectator extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
-            try {
-                doSpectatorCycle();
-            } catch (JSONException ex) {
-                throw new RuntimeException(ex);
-            }
+            doSpectatorCycle();
         }
     }
 
-    private void doSpectatorCycle() throws JSONException {
-        String info = socket.receiveString();
-        //System.out.println(info);
-        JSONObject json = new JSONObject(info);
-        Integer livesLeft = json.getInt("lives");
-        Integer numBallsLeft = json.getInt("numBalls");
-        if (livesLeft < ballsLeft || numBallsLeft < numBalls) {
-            for (Integer j = 0; j < 10; j++){
-                ball[j] = null;
+    private void doSpectatorCycle() {
+        try {
+            String info = socket.receiveString();
+            if (info.equals("lost")){
+                inGame = false;
+                timer.stop();
             }
-            ballsLeft = livesLeft;
-        }
-        score = json.getInt("score");
-        level = json.getInt("level");
-        numBalls = json.getInt("numBalls");
-        //bricksLeft = json.getInt("bricksLeft");
-        String paddlePos = json.getString("paddlePos");
-        String ballsPos = json.getString("ballsPos");
-        String bricksLeft = json.getString("bricksLeft");
+            else{
+                JSONObject json = new JSONObject(info);
+                Integer livesLeft = json.getInt("lives");
+                Integer numBallsLeft = json.getInt("numBalls");
+                for (Integer j = 0; j < 5; j++){
+                    ball[j] = null;
+                }
+                ballsLeft = livesLeft;
+                score = json.getInt("score");
+                level = json.getInt("level");
+                numBalls = json.getInt("numBalls");
+                lastPower = json.getString("lastPower");
 
-        String[] paddlePosArray = paddlePos.split(",");
-        String[] ballsPosArray = ballsPos.split(",");
+                String paddlePos = json.getString("paddlePos");
+                String ballsPos = json.getString("ballsPos");
+                String bricksLeft = json.getString("bricksLeft");
 
-        paddlePosArr = new Integer[paddlePosArray.length];
-        for(Integer i=0; i<paddlePosArray.length; i++) {
-            paddlePosArr[i] = Integer.parseInt(paddlePosArray[i]);
-        }
-        ballsPosArr = new Integer[ballsPosArray.length];
-        for(Integer i=0; i<ballsPosArray.length; i++) {
-            ballsPosArr[i] = Integer.parseInt(ballsPosArray[i]);
-        }
-        //System.out.println(Arrays.toString(bricksNumLeftArr));
+                String[] paddlePosArray = paddlePos.split(",");
+                String[] ballsPosArray = ballsPos.split(",");
 
-        paddle.setX(paddlePosArr[0]);
-        paddle.setY(paddlePosArr[1]);
-        if (bricksLeft.equals("")) {
-            initSpectator();
-        }
-        else {
-            String[] bricksLeftArray = bricksLeft.split(",");
-            bricksLeftArr = new Integer[bricksLeftArray.length];
-            for(Integer i=0; i<bricksLeftArray.length; i++) {
-                bricksLeftArr[i] = Integer.parseInt(bricksLeftArray[i]);
-            }
-            Integer[] bricksNumLeftArr = new Integer[112];
-            for(Integer i=0; i < bricksLeftArr.length / 3; i++) {
-                bricksNumLeftArr[i] = bricksLeftArr[i * 3];
-            }
-            for (Integer j = 0; j < 112; j++){
-                if (!contains(bricksNumLeftArr, j) && bricks[j] != null) {
-                    bricks[j] = null;
+                paddlePosArr = new Integer[paddlePosArray.length];
+                for(Integer i=0; i<paddlePosArray.length; i++) {
+                    paddlePosArr[i] = Integer.parseInt(paddlePosArray[i]);
+                }
+                ballsPosArr = new Integer[ballsPosArray.length];
+                for(Integer i=0; i<ballsPosArray.length; i++) {
+                    ballsPosArr[i] = Integer.parseInt(ballsPosArray[i]);
+                }
+                if (paddlePosArr[2] == 0){
+                    paddle = new Paddle("small");
+                }
+                else if (paddlePosArr[2] == 1){
+                    paddle = new Paddle("normal");
+                }
+                else if (paddlePosArr[2] == 2){
+                    paddle = new Paddle("big");
+                }
+
+                paddle.setX(paddlePosArr[0]);
+                paddle.setY(paddlePosArr[1]);
+
+                Integer[] ballsNumLeftArr = new Integer[112];
+                for(Integer i=0; i < ballsPosArr.length / 3; i++) {
+                    ballsNumLeftArr[i] = ballsPosArr[i * 3];
+                }
+                if (bricksLeft.equals("")) {
+                    initSpectator();
+                }
+                else {
+                    String[] bricksLeftArray = bricksLeft.split(",");
+                    bricksLeftArr = new Integer[bricksLeftArray.length];
+                    for(Integer i=0; i<bricksLeftArray.length; i++) {
+                        bricksLeftArr[i] = Integer.parseInt(bricksLeftArray[i]);
+                    }
+                    Integer[] bricksNumLeftArr = new Integer[112];
+                    for(Integer i=0; i < bricksLeftArr.length / 3; i++) {
+                        bricksNumLeftArr[i] = bricksLeftArr[i * 3];
+                    }
+                    for (Integer j = 0; j < 112; j++){
+                        if (!contains(bricksNumLeftArr, j) && bricks[j] != null) {
+                            bricks[j] = null;
+                        }
+                    }
+                }
+
+                for (Integer integer : ballsNumLeftArr) {
+                    if (ball[integer] == null) {
+                        Integer index = findIndex(ballsPosArr, integer);
+                        if (index % 3 == 0) {
+                            ball[integer] = new Ball(0, 0);
+                            ball[integer].setX(ballsPosArr[index + 1]);
+                            ball[integer].setY(ballsPosArr[index + 2]);
+                        }
+                    }
                 }
             }
-        }
-
-        for (Integer j = 0; j < ballsPosArr.length / 3; j++){
-            //System.out.println(Arrays.toString(ballsPosArr));
-            if (ball[j] != null && !ballsPosArr[j*3].equals(j)) {
-                //System.out.println("made ball null");
-                ball[j] = null;
-            }
-            if (ball[j] == null && ballsPosArr[j*3].equals(j)) {
-                //System.out.println("drawing new ball");
-                ball[j] = new Ball(0,0);
-                ball[j].setX(ballsPosArr[(j * 3) + 1]);
-                ball[j].setY(ballsPosArr[(j * 3) + 2]);
-                break;
-            }
-            else if (ball[j] != null && ballsPosArr[j*3].equals(j)) {
-                //System.out.println("updating ball");
-                ball[j].setX(ballsPosArr[(j * 3) + 1]);
-                ball[j].setY(ballsPosArr[(j * 3) + 2]);
-            }
-        }
+        } catch (Exception ignored) { }
 
         repaint();
     }
