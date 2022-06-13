@@ -6,7 +6,16 @@ import javax.swing.JFrame;
 import java.awt.*;
 import java.lang.*;
 
+/**
+ * Clase Breakout extiende JFrame
+ * es la clase principal del juego
+ */
 public class Breakout extends JFrame {
+    /**
+     * Contructor de Breakout
+     * @param mode modo de juego
+     * @throws JSONException Error de JSON
+     */
     public Breakout(Integer mode) throws JSONException {
         if (mode == 1) {
             initUIPlayer();
@@ -16,6 +25,10 @@ public class Breakout extends JFrame {
         }
     }
 
+    /**
+     * initUIPlayer inicializa el juego como jugador
+     * @throws JSONException Error JSON
+     */
     public void initUIPlayer() throws JSONException {
 
         add(new Board());
@@ -26,6 +39,10 @@ public class Breakout extends JFrame {
         pack();
     }
 
+    /**
+     * initUISpectator inicializa el juego como expectador
+     * @throws JSONException Error JSON
+     */
     public void initUISpectator() throws JSONException {
 
         add(new Spectator());

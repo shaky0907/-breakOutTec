@@ -23,6 +23,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.json.*;
 
+/**
+ * Clase Board extiende JPanel
+ */
 public class Board extends JPanel {
     private Timer timer;
     private String message = "GAME OVER";
@@ -44,11 +47,20 @@ public class Board extends JPanel {
     private static SocketClient socket;
     private String lastPower;
     private Boolean frozen;
+
+    /**
+     * Construtor Board
+     * @throws JSONException Json error
+     */
     public Board() throws JSONException {
 
         initBoard();
     }
 
+    /**
+     * initBoard inicializa el board
+     * @throws JSONException Json error
+     */
     private void initBoard() throws JSONException {
 
         setBackground(Color.DARK_GRAY);
@@ -83,6 +95,14 @@ public class Board extends JPanel {
         gameInit(0, 3 ,1, 1, bricks);
     }
 
+    /**
+     * gameInit inicializa el juego
+     * @param scr
+     * @param lvs
+     * @param lvl
+     * @param balls
+     * @param bricks1
+     */
     private void gameInit(Integer scr, Integer lvs, Integer lvl, Integer balls, Brick[] bricks1) {
 
         numBalls = balls;
@@ -124,6 +144,10 @@ public class Board extends JPanel {
         timer.start();
     }
 
+    /**
+     * paintComponent override de la clase JPanel
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -147,6 +171,10 @@ public class Board extends JPanel {
         Toolkit.getDefaultToolkit().sync();
     }
 
+    /**
+     * drawObjects se encarga de dibujar todos los objetos en el board
+     * @param g2d the <code>Graphics2D</code> object to protect
+     */
     private void drawObjects(Graphics2D g2d) {
         for (Ball value : ball) {
             if (value == null) {
@@ -195,6 +223,10 @@ public class Board extends JPanel {
         }
     }
 
+    /**
+     * gameFinished revisa si se acaba el juego y cambia la pantalla respectivamente
+     * @param g2d the <code>Graphics2D</code> object to protect
+     */
     private void gameFinished(Graphics2D g2d) {
 
         var font = new Font("Verdana", Font.BOLD, 18);
@@ -220,14 +252,25 @@ public class Board extends JPanel {
         catch (Exception ignore) {}*/
     }
 
+    /**
+     * Clase TAdapter
+     */
     private class TAdapter extends KeyAdapter {
 
+        /**
+         * Override keyRelease
+         * @param e the event to be processed
+         */
         @Override
         public void keyReleased(KeyEvent e) {
 
             paddle.keyReleased(e);
         }
 
+        /**
+         * Override keyPressed
+         * @param e the event to be processed
+         */
         @Override
         public void keyPressed(KeyEvent e) {
 
@@ -243,8 +286,15 @@ public class Board extends JPanel {
         }
     }
 
+    /**
+     * Clase GameCyle implementa ActionListener
+     */
     private class GameCycle implements ActionListener {
 
+        /**
+         * Override actionPerfomed
+         * @param e the event to be processed
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
 
@@ -256,6 +306,10 @@ public class Board extends JPanel {
         }
     }
 
+    /**
+     * doGameCyle corre el juego
+     * @throws JSONException JSON error
+     */
     private void doGameCycle() throws JSONException {
         for (Ball value : ball) {
             if (value == null) {
@@ -269,12 +323,19 @@ public class Board extends JPanel {
         socket.sentString(parseJson(ballsLeft, score, numBalls, level, paddle, ball, bricks, lastPower));
     }
 
+    /**
+     * stopGame para el juego
+     */
     private void stopGame() {
 
         inGame = false;
         timer.stop();
     }
 
+    /**
+     * checkCollision revisa las colisiones del juego
+     * @throws JSONException JSON ERROR
+     */
     private void checkCollision() throws JSONException {
 
         for (Integer i = 0; i < 5; i++) {

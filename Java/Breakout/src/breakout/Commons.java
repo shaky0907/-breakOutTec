@@ -2,6 +2,9 @@ package breakout;
 
 import java.lang.*;
 
+/**
+ * Interface de variables
+ */
 public interface Commons {
 
     Integer WIDTH = 600;

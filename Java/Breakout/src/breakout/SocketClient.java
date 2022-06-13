@@ -3,11 +3,19 @@ import java.net.*;
 import java.io.*;
 import java.lang.*;
 
+/**
+ * Clase SocketClient
+ */
 public class SocketClient
 {
 
     private Socket socket;
 
+    /**
+     * constructor
+     * @param ip ip del cliente
+     * @param port puerto del cliente
+     */
     public SocketClient(String ip, Integer port)
     {
         try
@@ -24,6 +32,9 @@ public class SocketClient
         }
     }
 
+    /**
+     * disconnect desconecta el socket
+     */
     public void disconnect() {
         try{
             socket.close();
@@ -33,7 +44,10 @@ public class SocketClient
         }
     }
 
-
+    /**
+     * sentString manda el string por socket
+     * @param message mensaje a ser enviado
+     */
     public void sentString(String message)
     {
         try
@@ -49,6 +63,10 @@ public class SocketClient
         }
     }
 
+    /**
+     * recieveString recibe el string por los sockets
+     * @return string
+     */
     public String receiveString()
     {
         String receiveString = "";

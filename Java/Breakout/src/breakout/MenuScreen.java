@@ -7,6 +7,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Clase MenuScreen extiende JFrame
+ */
 public class MenuScreen extends JFrame{
     public JPanel panel1;
     private JButton WATCHButton;
@@ -14,6 +17,9 @@ public class MenuScreen extends JFrame{
     private JLabel logoLabel;
     ImageIcon imageLogo = new ImageIcon("src/resources/logo.png");
 
+    /**
+     * Constructor MenuScreen
+     */
     public MenuScreen(){
         logoLabel.setIcon(imageLogo);
         logoLabel.setText("");
@@ -48,6 +54,11 @@ public class MenuScreen extends JFrame{
             }
         });
     }
+
+    /**
+     * main corre todo el juego
+     * @param args args
+     */
     public static void main(String[] args){
         MenuScreen m = new MenuScreen();
         m.setContentPane(m.panel1);

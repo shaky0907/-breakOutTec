@@ -10,6 +10,9 @@ import java.awt.event.ActionListener;
 import java.lang.Object;
 import java.util.Arrays;
 
+/**
+ * Clase Spectator extiende JPanel
+ */
 public class Spectator extends JPanel {
     private Timer timer;
     private String message = "GAME OVER";
@@ -30,6 +33,11 @@ public class Spectator extends JPanel {
     private Integer[] bricksLeftArr;
     private String lastPower;
     private static SocketClient socket;
+
+    /**
+     * Constructor Spectator
+     * @throws JSONException JSON error
+     */
     public Spectator() throws JSONException {
         socket = new SocketClient("0.0.0.0", 3550);
         socket.sentString("{\"type\": 2 }");
@@ -37,6 +45,10 @@ public class Spectator extends JPanel {
         lastPower = "none";
     }
 
+    /**
+     * initSpectator inicializa el espectador
+     * @throws JSONException JSON error
+     */
     private void initSpectator() throws JSONException {
 
         setBackground(Color.DARK_GRAY);
@@ -80,11 +92,18 @@ public class Spectator extends JPanel {
         gameInit();
     }
 
+    /**
+     * gameInit inicia el juego
+     */
     private void gameInit() {
         timer = new Timer(Commons.PERIOD, new Spectator.SpectatorCycle());
         timer.start();
     }
 
+    /**
+     * Override paintComponents se encarga de pintar componentes del juego
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -108,6 +127,10 @@ public class Spectator extends JPanel {
         Toolkit.getDefaultToolkit().sync();
     }
 
+    /**
+     * Se encarha de dibujar objetos
+     * @param g2d the <code>Graphics2D</code> object to protect
+     */
     private void drawObjects(Graphics2D g2d) {
         for (Ball value : ball) {
             if (value != null) {
@@ -147,6 +170,10 @@ public class Spectator extends JPanel {
         }
     }
 
+    /**
+     * se encarga de revisar si el juego termino y cambia la pantalla
+     * @param g2d the <code>Graphics2D</code> object to protect
+     */
     private void gameFinished(Graphics2D g2d) {
 
         var font = new Font("Verdana", Font.BOLD, 18);
@@ -254,9 +281,23 @@ public class Spectator extends JPanel {
 
         repaint();
     }
+
+    /**
+     * contains revisa si el integer pertenece al array
+     * @param arr array
+     * @param key elemento
+     * @return boolean si pertenece
+     */
     private static Boolean contains(final Integer[] arr, final Integer key){
         return Arrays.stream(arr).anyMatch(i -> i == key);
     }
+
+    /**
+     * findIndex retorna el indice del elemento
+     * @param arr array
+     * @param t elemento
+     * @return indice
+     */
     private static Integer findIndex(Integer arr[], Integer t)
     {
 

@@ -2,10 +2,14 @@ package breakout;
 import java.io.*;
 import java.lang.*;
 
+/**
+ * Clase SocketData implementa Serializable
+ */
 public class SocketData implements Serializable
 {
     /**
-     * Constructor
+     * Constructor SocketData
+     * @param cadena string
      */
     public SocketData(String cadena)
     {
@@ -34,8 +38,10 @@ public class SocketData implements Serializable
 
 
 
-    /** Metodo para escribir los atributos de esta clase en un DataOutputStram de forma
+    /**
+     * Metodo para escribir los atributos de esta clase en un DataOutputStram de forma
      *  que luego pueda entenderlos un programa en C.
+     * @param out outputstream
      */
     public void writeObject(java.io.DataOutputStream out) throws IOException
     {
@@ -50,11 +56,12 @@ public class SocketData implements Serializable
     }
 
 
-    /**Metodo que lee los atributos de esta clase de un DataInputStream tal cual nos los
+    /**
+     * Metodo que lee los atributos de esta clase de un DataInputStream tal cual nos los
      * envia un programa en C.
      * No soporta que se envie un cadena "", es decir, un unico \0
+     * @param in inputstream
      */
-
     public void readObject(java.io.DataInputStream in) throws IOException
     {
         //Se lee la longitud de la cadena y se le resta 1 para eliminar el \0 de C.
