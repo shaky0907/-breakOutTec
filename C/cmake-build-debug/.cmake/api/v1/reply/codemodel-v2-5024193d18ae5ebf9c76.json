@@ -49,8 +49,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/kash/Documents/GitHub/-breakOutTec/C/cmake-build-debug",
-		"source" : "/home/kash/Documents/GitHub/-breakOutTec/C"
+		"build" : "/home/david/Documents/GitHub/-breakOutTec/C/cmake-build-debug",
+		"source" : "/home/david/Documents/GitHub/-breakOutTec/C"
 	},
 	"version" : 
 	{

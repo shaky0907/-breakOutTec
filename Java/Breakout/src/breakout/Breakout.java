@@ -31,7 +31,7 @@ public class Breakout extends JFrame {
      */
     public void initUIPlayer() throws JSONException {
 
-        add(new Board());
+        add(Board.getInstance());
         setTitle("Breakout Player");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);

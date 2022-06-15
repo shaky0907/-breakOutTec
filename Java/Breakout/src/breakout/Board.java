@@ -48,6 +48,8 @@ public class Board extends JPanel {
     private String lastPower;
     private Boolean frozen;
 
+    private static Board board_instance = null;
+
     /**
      * Construtor Board
      * @throws JSONException Json error
@@ -55,6 +57,13 @@ public class Board extends JPanel {
     public Board() throws JSONException {
 
         initBoard();
+    }
+
+    public static Board getInstance() throws JSONException {
+        if(board_instance == null){
+            board_instance = new Board();
+        }
+        return board_instance;
     }
 
     /**
