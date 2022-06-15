@@ -1,21 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="23840209-1bc5-42d4-b5d3-01323b906d74" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../../C/cmake-build-debug/.cmake/api/v1/reply/cache-v2-c9c10106eb583ec57234.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C/cmake-build-debug/.cmake/api/v1/reply/cmakeFiles-v1-ae4c58e1de482b786cf2.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-25aa2fa27c8a41cb5197.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C/cmake-build-debug/.cmake/api/v1/reply/index-2022-06-09T05-52-40-0771.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C/cmake-build-debug/C.cbp" beforeDir="false" afterPath="$PROJECT_DIR$/../../C/cmake-build-debug/C.cbp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../C/cmake-build-debug/CMakeCache.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C/cmake-build-debug/CMakeFiles/3.22.3/CMakeSystem.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/../../C/cmake-build-debug/CMakeFiles/3.22.3/CMakeSystem.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/../../C/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C/cmake-build-debug/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../../C/cmake-build-debug/CMakeFiles/TargetDirectories.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../C/cmake-build-debug/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/../../C/cmake-build-debug/cmake_install.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/breakout/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/breakout/Board.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/breakout/Breakout.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/breakout/Breakout.java" afterDir="false" />
-    </list>
+    <list default="true" id="23840209-1bc5-42d4-b5d3-01323b906d74" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

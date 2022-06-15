@@ -102,7 +102,7 @@ public class Spectator extends JPanel {
 
     /**
      * Override paintComponents se encarga de pintar componentes del juego
-     * @param g the <code>Graphics</code> object to protect
+     * @param g the object to protect
      */
     @Override
     public void paintComponent(Graphics g) {
@@ -129,7 +129,7 @@ public class Spectator extends JPanel {
 
     /**
      * Se encarha de dibujar objetos
-     * @param g2d the <code>Graphics2D</code> object to protect
+     * @param g2d the object to protect
      */
     private void drawObjects(Graphics2D g2d) {
         for (Ball value : ball) {
@@ -172,7 +172,7 @@ public class Spectator extends JPanel {
 
     /**
      * se encarga de revisar si el juego termino y cambia la pantalla
-     * @param g2d the <code>Graphics2D</code> object to protect
+     * @param g2d the object to protect
      */
     private void gameFinished(Graphics2D g2d) {
 

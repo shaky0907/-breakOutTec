@@ -155,7 +155,7 @@ public class Board extends JPanel {
 
     /**
      * paintComponent override de la clase JPanel
-     * @param g the <code>Graphics</code> object to protect
+     * @param g the object to protect
      */
     @Override
     public void paintComponent(Graphics g) {
@@ -182,7 +182,7 @@ public class Board extends JPanel {
 
     /**
      * drawObjects se encarga de dibujar todos los objetos en el board
-     * @param g2d the <code>Graphics2D</code> object to protect
+     * @param g2d the object to protect
      */
     private void drawObjects(Graphics2D g2d) {
         for (Ball value : ball) {
@@ -234,7 +234,7 @@ public class Board extends JPanel {
 
     /**
      * gameFinished revisa si se acaba el juego y cambia la pantalla respectivamente
-     * @param g2d the <code>Graphics2D</code> object to protect
+     * @param g2d the object to protect
      */
     private void gameFinished(Graphics2D g2d) {
 
@@ -351,11 +351,12 @@ public class Board extends JPanel {
             if (ball[i] == null) {
                 continue;
             }
-            if (ball[i].getRect().getMaxY() > Commons.BOTTOM_EDGE) {
+            else if (ball[i].getRect().getMaxY() > Commons.BOTTOM_EDGE) {
                 if (ballsLeft > 1 && numBalls == 1) {
                     timer.stop();
                     ballsLeft--;
                     flag++;
+                    ball[i] = null;
                     gameInit(score, ballsLeft, level, numBalls, bricks);
                 }
                 else if (ballsLeft > 1 && numBalls > 1) {
