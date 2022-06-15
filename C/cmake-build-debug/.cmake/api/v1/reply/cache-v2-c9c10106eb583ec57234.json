@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/david/Documents/GitHub/-breakOutTec/C/cmake-build-debug"
+			"value" : "/home/kash/Documents/GitHub/-breakOutTec/C/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -127,7 +127,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : ""
+			"value" : "-j6"
 		},
 		{
 			"name" : "CMAKE_COLOR_MAKEFILE",
@@ -527,7 +527,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/home/david/Documents/GitHub/-breakOutTec/C"
+			"value" : "/home/kash/Documents/GitHub/-breakOutTec/C"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -1063,7 +1063,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/david/Documents/GitHub/-breakOutTec/C/cmake-build-debug"
+			"value" : "/home/kash/Documents/GitHub/-breakOutTec/C/cmake-build-debug"
 		},
 		{
 			"name" : "C_IS_TOP_LEVEL",
@@ -1087,7 +1087,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/home/david/Documents/GitHub/-breakOutTec/C"
+			"value" : "/home/kash/Documents/GitHub/-breakOutTec/C"
 		},
 		{
 			"name" : "ProcessorCount_cmd_nproc",

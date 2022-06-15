@@ -211,7 +211,7 @@ public class Board extends JPanel {
 
         g2d.setFont(font2);
         g2d.drawString(score.toString(), 5, 35);
-        g2d.drawString(ballsLeft.toString() + "/3", (Commons.WIDTH / 2) - (fontMetrics2.stringWidth(ballsLeft_msg) / 2), 35);
+        g2d.drawString(ballsLeft.toString() + "/3", (Commons.WIDTH / 2) - fontMetrics2.stringWidth(ballsLeft.toString() + "/3") + 15, 35);
         g2d.drawString(level.toString(), (Commons.WIDTH -5) - fontMetrics2.stringWidth(level.toString()), 35);
         g2d.drawString("LAST POWER: " + lastPower, (Commons.WIDTH / 2) - fontMetrics.stringWidth("LAST POWER: " + lastPower), (Commons.HEIGHT - 15));
 
